@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reconexão Evolution API - Configuração</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 1rem;
+    }
+    
+    .config-form {
+      display: block;
+    }
+    
+    .qr-scanner {
+      display: none;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin: 10px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+    }
+    
+    #qrcode {
+      margin: 1rem 0;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #timer {
+      margin: 1rem 0;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-weight: 600;
+    }
+    
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .share-url {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .copy-btn {
+      background: #28a745;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">📱 Evolution Reconexão</div>
+    
+    <!-- Formulário de Configuração -->
+    <div class="config-form" id="configForm">
+      <h2>Configurar Credenciais</h2>
+      <p>Preencha os dados abaixo e gere um link personalizado para o cliente</p>
+      
+      <div class="form-group">
+        <label for="apiBaseUrl">URL Base da API:</label>
+        <input type="url" id="apiBaseUrl" placeholder="https://api.exemplo.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="apiKey">API Key:</label>
+        <input type="password" id="apiKey" placeholder="Sua chave de API">
+      </div>
+      
+      <div class="form-group">
+        <label for="instanceName">Nome da Instância:</label>
+        <input type="text" id="instanceName" placeholder="Ex: MinhaInstancia">
+      </div>
+      
+      <button class="btn" onclick="generateClientUrl()">🔗 Gerar Link para Cliente</button>
+      <button class="btn btn-secondary" onclick="testConnection()">🧪 Testar Conexão</button>
+      
+      <div id="shareUrl" style="display: none;">
+        <h3>Link para o Cliente:</h3>
+        <div class="share-url" id="generatedUrl"></div>
+        <button class="btn copy-btn" onclick="copyToClipboard()">📋 Copiar Link</button>
+      </div>
+    </div>
+    
+    <!-- Scanner de QR Code -->
+    <div class="qr-scanner" id="qrScanner">
+      <h2>Scanner de QR Code</h2>
+      <p>Instância: <strong id="displayInstanceName"></strong></p>
+      
+      <div id="loader" class="loader"></div>
+      <div id="qrcode"></div>
+      <div id="timer"></div>
+      <div id="connectionStatus"></div>
+      
+      <button class="btn btn-secondary" onclick="backToConfig()">⬅️ Voltar às Configurações</button>
+    </div>
+  </div>
+
+  <script>
+    let timerInterval;
+    let checagemInterval;
+    let timeLeft = 30;
+    let config = {};
+
+    // Verifica se há configuração na URL ao carregar
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const configData = urlParams.get('config');
+      
+      if (configData) {
+        try {
+          // Decodifica a configuração da URL
+          config = JSON.parse(atob(configData));
+          showQRScanner();
+          generateQRCode();
+        } catch (error) {
+          showError('Link inválido ou corrompido');
+        }
+      }
+    };
+
+    function normalizeApiUrl(url) {
+      if (!url) return url;
+      
+      // Remove barras no final
+      return url.replace(/\/+$/, '');
+    }
+
+    function generateClientUrl() {
+      const apiBaseUrl = normalizeApiUrl(document.getElementById('apiBaseUrl').value);
+      const apiKey = document.getElementById('apiKey').value;
+      const instanceName = document.getElementById('instanceName').value;
+      
+      if (!apiBaseUrl || !apiKey || !instanceName) {
+        showError('Por favor, preencha todos os campos');
+        return;
+      }
+      
+      // Cria configuração codificada
+      const configObj = {
+        apiBaseUrl: apiBaseUrl,
+        apiKey: apiKey,
+        instanceName: instanceName
+      };
+      
+      const encodedConfig = btoa(JSON.stringify(configObj));
+      const currentUrl = window.location.href.split('?')[0];
+      const clientUrl = `${currentUrl}?config=${encodedConfig}`;
+      
+      document.getElementById('generatedUrl').textContent = clientUrl;
+      document.getElementById('shareUrl').style.display = 'block';
+    }
+
+    async function testConnection() {
+      const apiBaseUrl = normalizeApiUrl(document.getElementById('apiBaseUrl').value);
+      const apiKey = document.getElementById('apiKey').value;
+      const instanceName = document.getElementById('instanceName').value;
+      
+      if (!apiBaseUrl || !apiKey || !instanceName) {
+        showError('Por favor, preencha todos os campos');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${apiBaseUrl}/instance/connectionState/${instanceName}`, {
+          method: 'GET',
+          headers: {
+            'apikey': apiKey
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const state = data.instance?.state;
+          
+          let statusMessage = '✅ Conexão com a API testada com sucesso!\n';
+          let statusIcon = '';
+          let statusText = '';
+          
+          switch(state) {
+            case 'open':
+              statusIcon = '🟢';
+              statusText = 'Conectada';
+              break;
+            case 'close':
+              statusIcon = '🔴';
+              statusText = 'Desconectada';
+              break;
+            case 'connecting':
+              statusIcon = '🟡';
+              statusText = 'Pronta para conexão \n(precisa escanear o QR Code)';
+              break;
+            default:
+              statusIcon = '⚪';
+              statusText = state ? `Status: ${state}` : 'Status desconhecido';
+          }
+          
+          statusMessage += `\n${statusIcon} Status da Instância: ${statusText}`;
+          showSuccess(statusMessage);
+        } else {
+          if (response.status === 401) {
+            showError('❌ Erro na conexão. API KEY incorreta');
+          } else if (response.status === 404) {
+            showError('❌ Erro na conexão. Nome da Instância não encontrado');
+          } else {
+            // Tenta ler a resposta para verificar se é instância não encontrada
+            try {
+              const errorData = await response.json();
+              const errorMessage = errorData.message;
+              
+              if (Array.isArray(errorMessage) && errorMessage.some(msg => msg.includes('does not exist'))) {
+                showError('❌ Erro na conexão. Nome da Instância não encontrado');
+              } else {
+                showError('❌ Erro na conexão. Verifique as credenciais.');
+              }
+            } catch {
+              showError('❌ Erro na conexão. Verifique as credenciais.');
+            }
+          }
+        }
+      } catch (error) {
+        showError('❌ Erro de rede. Verifique a URL da API.');
+      }
+    }
+
+    function copyToClipboard() {
+      const url = document.getElementById('generatedUrl').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        showSuccess('📋 Link copiado para a área de transferência!');
+      });
+    }
+
+    function showQRScanner() {
+      document.getElementById('configForm').style.display = 'none';
+      document.getElementById('qrScanner').style.display = 'block';
+      document.getElementById('displayInstanceName').textContent = config.instanceName;
+    }
+
+    function backToConfig() {
+      document.getElementById('qrScanner').style.display = 'none';
+      document.getElementById('configForm').style.display = 'block';
+      
+      // Limpa intervalos
+      clearInterval(timerInterval);
+      clearInterval(checagemInterval);
+    }
+
+    async function generateQRCode() {
+      await fetchAndDisplayQRCode(true);
+      
+      // Reset timers
+      clearInterval(timerInterval);
+      clearInterval(checagemInterval);
+      timeLeft = 30; // Volta para 30 segundos como no original
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+      
+      // Inicia checagem de conexão
+      iniciarChecagemConexao();
+    }
+
+    async function fetchAndDisplayQRCode(isInitial = false) {
+      const loader = document.getElementById('loader');
+      const qrcodeElement = document.getElementById('qrcode');
+      
+      loader.style.display = 'block';
+      qrcodeElement.innerHTML = '';
+      
+      try {
+        const normalizedUrl = normalizeApiUrl(config.apiBaseUrl);
+        const response = await fetch(`${normalizedUrl}/instance/connect/${config.instanceName}`, {
+          method: 'GET',
+          headers: {
+            'apikey': config.apiKey
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        
+        const data = await response.json();
+        
+        // Verifica se a instância já está conectada
+        if (data.instance && data.instance.state === 'open') {
+          qrcodeElement.innerHTML = '<div class="status success">✅ WhatsApp já está conectado!<br/>Não é necessário escanear QR Code.</div>';
+          
+          // Para os timers já que não precisa mais atualizar
+          clearInterval(timerInterval);
+          clearInterval(checagemInterval);
+          
+          const timerElement = document.getElementById('timer');
+          timerElement.innerHTML = '<div class="status success">🎉 Instância já conectada!</div>';
+          
+          return;
+        }
+        
+        if (data.base64) {
+          // Remove o prefixo data:image se presente
+          const base64Clean = data.base64.includes(',') ? data.base64.split(',')[1] : data.base64;
+          const imgSrc = `data:image/png;base64,${base64Clean}`;
+          qrcodeElement.innerHTML = `<img src="${imgSrc}" alt="QR Code" style="max-width: 100%; height: auto;">`;
+        } else {
+          throw new Error('QR Code não encontrado na resposta');
+        }
+        
+      } catch (error) {
+        console.error('Erro ao gerar QR code:', error);
+        showError('Erro ao gerar QR code. Tentando novamente...');
+        qrcodeElement.innerHTML = '<p>❌ Erro ao carregar QR Code</p>';
+      } finally {
+        loader.style.display = 'none';
+      }
+    }
+
+    async function updateQRCode() {
+      await fetchAndDisplayQRCode();
+    }
+
+    function updateTimer() {
+      const timerElement = document.getElementById('timer');
+      timerElement.textContent = `🔄 Novo QR Code em: ${timeLeft}s`;
+      timerElement.style.color = timeLeft <= 5 ? 'red' : '';
+      
+      if (timeLeft === 0) {
+        clearInterval(timerInterval);
+        
+        updateQRCode();
+        timeLeft = 30; // Volta para 30 segundos como no original
+        timerInterval = setInterval(updateTimer, 1000);
+      } else {
+        timeLeft--;
+      }
+    }
+
+    function iniciarChecagemConexao() {
+      checagemInterval = setInterval(async () => {
+        try {
+          const normalizedUrl = normalizeApiUrl(config.apiBaseUrl);
+          const response = await fetch(`${normalizedUrl}/instance/connectionState/${config.instanceName}`, {
+            method: 'GET',
+            headers: {
+              'apikey': config.apiKey
+            }
+          });
+          
+          if (!response.ok) throw new Error('Erro ao verificar conexão');
+          
+          const data = await response.json();
+          const state = data.instance?.state;
+          
+          if (state === 'open') {
+            // Remove o QR Code e mostra mensagem de sucesso
+            const qrcodeElement = document.getElementById('qrcode');
+            qrcodeElement.innerHTML = '<div class="status success">✅ WhatsApp já está conectado!<br/>Não é necessário escanear QR Code.</div>';
+            
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.innerHTML = '<div class="status success">✅ WhatsApp conectado com sucesso!</div>';
+            
+            const timerElement = document.getElementById('timer');
+            timerElement.innerHTML = '<div class="status success">🎉 Conexão estabelecida!</div>';
+            
+            clearInterval(checagemInterval);
+            clearInterval(timerInterval);
+          }
+        } catch (error) {
+          console.error('Erro na checagem de conexão:', error);
+        }
+      }, 3000); // Checa a cada 3s
+    }
+
+    function showError(message) {
+      const statusDiv = document.createElement('div');
+      statusDiv.className = 'status error';
+      statusDiv.innerHTML = message.replace(/\n/g, '<br>');
+      
+      // Remove mensagens anteriores
+      const existing = document.querySelector('.status');
+      if (existing) existing.remove();
+      
+      // Adiciona nova mensagem
+      const container = document.querySelector('.container');
+      container.appendChild(statusDiv);
+      
+      // Remove após 5 segundos
+      setTimeout(() => statusDiv.remove(), 5000);
+    }
+
+    function showSuccess(message) {
+      const statusDiv = document.createElement('div');
+      statusDiv.className = 'status success';
+      statusDiv.innerHTML = message.replace(/\n/g, '<br>');
+      
+      // Remove mensagens anteriores
+      const existing = document.querySelector('.status');
+      if (existing) existing.remove();
+      
+      // Adiciona nova mensagem
+      const container = document.querySelector('.container');
+      container.appendChild(statusDiv);
+      
+      // Remove após 3 segundos
+      setTimeout(() => statusDiv.remove(), 3000);
+    }
+  </script>
+</body>
+</html>

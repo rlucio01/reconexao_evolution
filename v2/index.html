@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CONTECH MANAGER - Configuração</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1419;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(94, 188, 208, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(120, 145, 180, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(94, 188, 208, 0.04) 0%, transparent 50%);
+      animation: backgroundFlow 15s ease-in-out infinite;
+      z-index: -2;
+    }
+
+    @keyframes backgroundFlow {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.1) rotate(1deg); opacity: 0.8; }
+    }
+
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(94, 188, 208, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94, 188, 208, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .container {
+      background: rgba(15, 20, 25, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(94, 188, 208, 0.2);
+      border-radius: 24px;
+      padding: 3rem;
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 100px rgba(94, 188, 208, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      text-align: center;
+      min-width: 520px;
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, 
+        rgba(94, 188, 208, 0.5), 
+        rgba(120, 145, 180, 0.3), 
+        rgba(94, 188, 208, 0.5));
+      border-radius: 26px;
+      z-index: -1;
+      animation: borderGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes borderGlow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    .logo-area {
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .evolution-logo {
+      width: 180px;
+      height: 80px;
+      margin: 0 auto 2rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #5ebcd0, #7891b4, #a8c8ec);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.1em;
+      position: relative;
+    }
+
+    .logo-particles {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      width: 60px;
+      height: 30px;
+      transform: translateY(-50%);
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #5ebcd0;
+      border-radius: 50%;
+      animation: particleFloat 3s ease-in-out infinite;
+    }
+
+    .particle:nth-child(1) { top: 5px; left: 10px; animation-delay: 0s; }
+    .particle:nth-child(2) { top: 15px; left: 25px; animation-delay: 0.5s; }
+    .particle:nth-child(3) { top: 8px; left: 40px; animation-delay: 1s; }
+    .particle:nth-child(4) { top: 20px; left: 15px; animation-delay: 1.5s; }
+    .particle:nth-child(5) { top: 3px; left: 30px; animation-delay: 2s; }
+
+    @keyframes particleFloat {
+      0%, 100% { 
+        transform: translateY(0) scale(1); 
+        opacity: 0.7; 
+      }
+      50% { 
+        transform: translateY(-10px) scale(1.2); 
+        opacity: 1; 
+      }
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #7891b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      color: rgba(94, 188, 208, 0.8);
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 3rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      padding: 1rem 1.5rem;
+      background: rgba(94, 188, 208, 0.1);
+      border: 1px solid rgba(94, 188, 208, 0.3);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: #5ebcd0;
+      font-family: 'JetBrains Mono', monospace;
+      backdrop-filter: blur(10px);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: #5ebcd0;
+      border-radius: 50%;
+      animation: statusPulse 2s infinite;
+      box-shadow: 0 0 10px rgba(94, 188, 208, 0.5);
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+      }
+      50% { 
+        opacity: 0.6; 
+        transform: scale(1.2);
+      }
+    }
+
+    /* Form Styles */
+    .config-form, .qr-scanner {
+      position: relative;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+      text-align: left;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #7891b4;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: rgba(15, 20, 25, 0.8);
+      border: 2px solid rgba(94, 188, 208, 0.3);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+      backdrop-filter: blur(10px);
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      border-color: #5ebcd0;
+      box-shadow: 
+        0 0 0 4px rgba(94, 188, 208, 0.1),
+        0 0 30px rgba(94, 188, 208, 0.2);
+      background: rgba(15, 20, 25, 0.9);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(120, 145, 180, 0.6);
+      font-weight: 300;
+    }
+
+    /* Button Styles */
+    .btn {
+      background: linear-gradient(135deg, #5ebcd0, #7891b4);
+      color: #0f1419;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(94, 188, 208, 0.3);
+      margin: 10px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(94, 188, 208, 0.4);
+      background: linear-gradient(135deg, #7891b4, #5ebcd0);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      color: #ffffff;
+    }
+
+    .btn:disabled {
+      background: rgba(120, 145, 180, 0.3);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* QR Code and Timer Styles */
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(94, 188, 208, 0.2);
+      border-top: 3px solid #5ebcd0;
+      border-radius: 50%;
+      animation: aiSpin 1s linear infinite;
+      margin: 2rem auto;
+      display: none;
+      position: relative;
+    }
+
+    .loader::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(120, 145, 180, 0.3);
+      border-bottom: 2px solid #7891b4;
+      border-radius: 50%;
+      animation: aiSpin 0.8s linear infinite reverse;
+    }
+
+    @keyframes aiSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #qrcode {
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    #qrcode img {
+      border-radius: 16px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 50px rgba(94, 188, 208, 0.2);
+      border: 2px solid rgba(94, 188, 208, 0.4);
+      max-width: 100%;
+      height: auto;
+      animation: qrGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes qrGlow {
+      0%, 100% { 
+        box-shadow: 
+          0 20px 40px rgba(0, 0, 0, 0.3),
+          0 0 50px rgba(94, 188, 208, 0.2);
+      }
+      50% { 
+        box-shadow: 
+          0 25px 50px rgba(0, 0, 0, 0.4),
+          0 0 80px rgba(94, 188, 208, 0.4);
+      }
+    }
+
+    #timer {
+      margin: 2rem 0;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #5ebcd0;
+      background: rgba(15, 20, 25, 0.6);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(94, 188, 208, 0.2);
+      font-family: 'JetBrains Mono', monospace;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Status Messages */
+    .status {
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      backdrop-filter: blur(10px);
+    }
+
+    .status.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Share URL Styles */
+    .share-url {
+      background: rgba(15, 20, 25, 0.8);
+      border: 1px solid rgba(94, 188, 208, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      word-break: break-all;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      color: rgba(94, 188, 208, 0.9);
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      padding: 0.8rem 1.6rem;
+      font-size: 0.9rem;
+    }
+
+    /* Tech lines animation */
+    .tech-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 24px;
+    }
+
+    .tech-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(94, 188, 208, 0.5), transparent);
+      animation: techScan 4s ease-in-out infinite;
+    }
+
+    .tech-line:nth-child(1) {
+      top: 20%;
+      width: 60%;
+      left: 20%;
+      animation-delay: 0s;
+    }
+
+    .tech-line:nth-child(2) {
+      top: 80%;
+      width: 40%;
+      right: 30%;
+      animation-delay: 2s;
+    }
+
+    @keyframes techScan {
+      0%, 100% { opacity: 0; transform: scaleX(0); }
+      50% { opacity: 1; transform: scaleX(1); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 2rem;
+        min-width: auto;
+        max-width: none;
+      }
+      
+      h1 {
+        font-size: 1.75rem;
+      }
+      
+      .logo-text {
+        font-size: 1.8rem;
+      }
+
+      .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    /* Hide/Show classes */
+    .config-form {
+      display: block;
+    }
+    
+    .qr-scanner {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-overlay"></div>
+  
+  <div class="container">
+    <div class="tech-lines">
+      <div class="tech-line"></div>
+      <div class="tech-line"></div>
+    </div>
+    
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      SISTEMA OPERACIONAL >> PRONTO PARA CONFIGURAÇÃO
+    </div>
+
+    <!-- Formulário de Configuração -->
+    <div class="config-form" id="configForm">
+      <div class="logo-area">
+        <div class="evolution-logo">
+          <div class="logo-text">📱 CONTECH MANAGER</div>
+          <div class="logo-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+          </div>
+        </div>
+        <h1>Configurar Credenciais</h1>
+        <p class="subtitle">// Preencha os dados abaixo e gere um link personalizado para o cliente</p>
+      </div>
+      
+      <div class="form-group">
+        <label for="apiBaseUrl">URL Base da API:</label>
+        <input type="url" id="apiBaseUrl" placeholder="https://api.exemplo.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="apiKey">API Key:</label>
+        <input type="password" id="apiKey" placeholder="Sua chave de API">
+      </div>
+      
+      <div class="form-group">
+        <label for="instanceName">Nome da Instância:</label>
+        <input type="text" id="instanceName" placeholder="Ex: MinhaInstancia">
+      </div>
+      
+      <button class="btn" onclick="generateClientUrl()">🔗 Gerar Link para Cliente</button>
+      <button class="btn btn-secondary" onclick="testConnection()">🧪 Testar Conexão</button>
+      
+      <div id="shareUrl" style="display: none;">
+        <h3 style="color: #7891b4; margin-top: 2rem; font-family: 'JetBrains Mono', monospace;">Link para o Cliente:</h3>
+        <div class="share-url" id="generatedUrl"></div>
+        <button class="btn copy-btn" onclick="copyToClipboard()">📋 Copiar Link</button>
+      </div>
+    </div>
+    
+    <!-- Scanner de QR Code -->
+    <div class="qr-scanner" id="qrScanner">
+      <div class="logo-area">
+        <div class="evolution-logo">
+          <div class="logo-text">📱 EVOLUTION</div>
+          <div class="logo-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+          </div>
+        </div>
+        <h1>Scanner de QR Code</h1>
+        <p class="subtitle">// Instância: <strong id="displayInstanceName"></strong></p>
+      </div>
+      
+      <div id="loader" class="loader"></div>
+      <div id="qrcode"></div>
+      <div id="timer"></div>
+      <div id="connectionStatus"></div>
+      
+      <button class="btn btn-secondary" onclick="backToConfig()">⬅️ Voltar às Configurações</button>
+    </div>
+  </div>
+
+  <script>
+    let timerInterval;
+    let checagemInterval;
+    let timeLeft = 30;
+    let config = {};
+
+    // Verifica se há configuração na URL ao carregar
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const configData = urlParams.get('config');
+      
+      if (configData) {
+        try {
+          // Decodifica a configuração da URL
+          config = JSON.parse(atob(configData));
+          showQRScanner();
+          generateQRCode();
+        } catch (error) {
+          showError('Link inválido ou corrompido');
+        }
+      }
+    };
+
+    function normalizeApiUrl(url) {
+      if (!url) return url;
+      
+      // Remove barras no final
+      return url.replace(/\/+$/, '');
+    }
+
+    function generateClientUrl() {
+      const apiBaseUrl = normalizeApiUrl(document.getElementById('apiBaseUrl').value);
+      const apiKey = document.getElementById('apiKey').value;
+      const instanceName = document.getElementById('instanceName').value;
+      
+      if (!apiBaseUrl || !apiKey || !instanceName) {
+        showError('Por favor, preencha todos os campos');
+        return;
+      }
+      
+      // Cria configuração codificada
+      const configObj = {
+        apiBaseUrl: apiBaseUrl,
+        apiKey: apiKey,
+        instanceName: instanceName
+      };
+      
+      const encodedConfig = btoa(JSON.stringify(configObj));
+      const currentUrl = window.location.href.split('?')[0];
+      const clientUrl = `${currentUrl}?config=${encodedConfig}`;
+      
+      document.getElementById('generatedUrl').textContent = clientUrl;
+      document.getElementById('shareUrl').style.display = 'block';
+    }
+
+    async function testConnection() {
+      const apiBaseUrl = normalizeApiUrl(document.getElementById('apiBaseUrl').value);
+      const apiKey = document.getElementById('apiKey').value;
+      const instanceName = document.getElementById('instanceName').value;
+      
+      if (!apiBaseUrl || !apiKey || !instanceName) {
+        showError('Por favor, preencha todos os campos');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${apiBaseUrl}/instance/connectionState/${instanceName}`, {
+          method: 'GET',
+          headers: {
+            'apikey': apiKey
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const state = data.instance?.state;
+          
+          let statusMessage = '✅ Conexão com a API testada com sucesso!\n';
+          let statusIcon = '';
+          let statusText = '';
+          
+          switch(state) {
+            case 'open':
+              statusIcon = '🟢';
+              statusText = 'Conectada';
+              break;
+            case 'close':
+              statusIcon = '🔴';
+              statusText = 'Desconectada';
+              break;
+            case 'connecting':
+              statusIcon = '🟡';
+              statusText = 'Pronta para conexão \n(precisa escanear o QR Code)';
+              break;
+            default:
+              statusIcon = '⚪';
+              statusText = state ? `Status: ${state}` : 'Status desconhecido';
+          }
+          
+          statusMessage += `\n${statusIcon} Status da Instância: ${statusText}`;
+          showSuccess(statusMessage);
+        } else {
+          if (response.status === 401) {
+            showError('❌ Erro na conexão. API KEY incorreta');
+          } else if (response.status === 404) {
+            showError('❌ Erro na conexão. Nome da Instância não encontrado');
+          } else {
+            // Tenta ler a resposta para verificar se é instância não encontrada
+            try {
+              const errorData = await response.json();
+              const errorMessage = errorData.message;
+              
+              if (Array.isArray(errorMessage) && errorMessage.some(msg => msg.includes('does not exist'))) {
+                showError('❌ Erro na conexão. Nome da Instância não encontrado');
+              } else {
+                showError('❌ Erro na conexão. Verifique as credenciais.');
+              }
+            } catch {
+              showError('❌ Erro na conexão. Verifique as credenciais.');
+            }
+          }
+        }
+      } catch (error) {
+        showError('❌ Erro de rede. Verifique a URL da API.');
+      }
+    }
+
+    function copyToClipboard() {
+      const url = document.getElementById('generatedUrl').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        showSuccess('📋 Link copiado para a área de transferência!');
+      });
+    }
+
+    function showQRScanner() {
+      document.getElementById('configForm').style.display = 'none';
+      document.getElementById('qrScanner').style.display = 'block';
+      document.getElementById('displayInstanceName').textContent = config.instanceName;
+      
+      // Atualiza status bar
+      const statusBar = document.querySelector('.status-bar');
+      statusBar.innerHTML = '<div class="status-dot"></div>SISTEMA OPERACIONAL >> AGUARDANDO CONEXÃO';
+    }
+
+    function backToConfig() {
+      document.getElementById('qrScanner').style.display = 'none';
+      document.getElementById('configForm').style.display = 'block';
+      
+      // Limpa intervalos
+      clearInterval(timerInterval);
+      clearInterval(checagemInterval);
+      
+      // Restaura status bar
+      const statusBar = document.querySelector('.status-bar');
+      statusBar.innerHTML = '<div class="status-dot"></div>SISTEMA OPERACIONAL >> PRONTO PARA CONFIGURAÇÃO';
+    }
+
+    async function generateQRCode() {
+      await fetchAndDisplayQRCode(true);
+      
+      // Reset timers
+      clearInterval(timerInterval);
+      clearInterval(checagemInterval);
+      timeLeft = 30;
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+      
+      // Inicia checagem de conexão
+      iniciarChecagemConexao();
+    }
+
+    async function fetchAndDisplayQRCode(isInitial = false) {
+      const loader = document.getElementById('loader');
+      const qrcodeElement = document.getElementById('qrcode');
+      
+      loader.style.display = 'block';
+      qrcodeElement.innerHTML = '';
+      
+      try {
+        const normalizedUrl = normalizeApiUrl(config.apiBaseUrl);
+        const response = await fetch(`${normalizedUrl}/instance/connect/${config.instanceName}`, {
+          method: 'GET',
+          headers: {
+            'apikey': config.apiKey
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        
+        const data = await response.json();
+        
+        // Verifica se a instância já está conectada
+        if (data.instance && data.instance.state === 'open') {
+          qrcodeElement.innerHTML = `
+            <div style="padding: 2.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); backdrop-filter: blur(10px);">
+              <div style="font-size: 4rem; margin-bottom: 1.5rem; color: #10b981;">✓</div>
+              <h3 style="color: #10b981; margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem;">CONEXÃO ESTABELECIDA</h3>
+              <p style="color: rgba(16, 185, 129, 0.8); font-size: 0.9rem; font-family: 'JetBrains Mono', monospace;">WhatsApp já está conectado!</p>
+              <div style="margin-top: 1rem; font-size: 0.8rem; color: rgba(16, 185, 129, 0.6);">// Sistema operacional ativo</div>
+            </div>
+          `;
+          
+          // Para os timers já que não precisa mais atualizar
+          clearInterval(timerInterval);
+          clearInterval(checagemInterval);
+          
+          const timerElement = document.getElementById('timer');
+          timerElement.innerHTML = '<div class="status success">🎉 Instância já conectada!</div>';
+          
+          // Atualiza status bar
+          const statusBar = document.querySelector('.status-bar');
+          statusBar.innerHTML = '<div class="status-dot" style="background: #10b981;"></div>CONEXÃO ESTABELECIDA >> SISTEMA ATIVO';
+          statusBar.style.background = 'rgba(16, 185, 129, 0.1)';
+          statusBar.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          statusBar.style.color = '#10b981';
+          
+          return;
+        }
+        
+        if (data.base64) {
+          // Remove o prefixo data:image se presente
+          const base64Clean = data.base64.includes(',') ? data.base64.split(',')[1] : data.base64;
+          const imgSrc = `data:image/png;base64,${base64Clean}`;
+          qrcodeElement.innerHTML = `<img src="${imgSrc}" alt="QR Code" style="max-width: 100%; height: auto;">`;
+        } else {
+          throw new Error('QR Code não encontrado na resposta');
+        }
+        
+      } catch (error) {
+        console.error('Erro ao gerar QR code:', error);
+        showError('Erro ao gerar QR code. Tentando novamente...');
+        qrcodeElement.innerHTML = '<p style="color: #ef4444;">❌ Erro ao carregar QR Code</p>';
+      } finally {
+        loader.style.display = 'none';
+      }
+    }
+
+    async function updateQRCode() {
+      await fetchAndDisplayQRCode();
+    }
+
+    function updateTimer() {
+      const timerElement = document.getElementById('timer');
+      timerElement.textContent = `// Novo QR Code em: ${timeLeft}s`;
+      timerElement.style.color = timeLeft <= 5 ? '#ef4444' : '#5ebcd0';
+      
+      if (timeLeft === 0) {
+        clearInterval(timerInterval);
+        
+        updateQRCode();
+        timeLeft = 30;
+        timerInterval = setInterval(updateTimer, 1000);
+      } else {
+        timeLeft--;
+      }
+    }
+
+    function iniciarChecagemConexao() {
+      checagemInterval = setInterval(async () => {
+        try {
+          const normalizedUrl = normalizeApiUrl(config.apiBaseUrl);
+          const response = await fetch(`${normalizedUrl}/instance/connectionState/${config.instanceName}`, {
+            method: 'GET',
+            headers: {
+              'apikey': config.apiKey
+            }
+          });
+          
+          if (!response.ok) throw new Error('Erro ao verificar conexão');
+          
+          const data = await response.json();
+          const state = data.instance?.state;
+          
+          if (state === 'open') {
+            // Remove o QR Code e mostra mensagem de sucesso
+            const qrcodeElement = document.getElementById('qrcode');
+            qrcodeElement.innerHTML = `
+              <div style="padding: 2.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); backdrop-filter: blur(10px);">
+                <div style="font-size: 4rem; margin-bottom: 1.5rem; color: #10b981;">✓</div>
+                <h3 style="color: #10b981; margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem;">CONEXÃO ESTABELECIDA</h3>
+                <p style="color: rgba(16, 185, 129, 0.8); font-size: 0.9rem; font-family: 'JetBrains Mono', monospace;">WhatsApp conectado com sucesso!</p>
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: rgba(16, 185, 129, 0.6);">// Sistema operacional ativo</div>
+              </div>
+            `;
+            
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.innerHTML = '<div class="status success">✅ WhatsApp conectado com sucesso!</div>';
+            
+            const timerElement = document.getElementById('timer');
+            timerElement.innerHTML = '<div class="status success">🎉 Conexão estabelecida!</div>';
+            
+            // Atualiza status bar
+            const statusBar = document.querySelector('.status-bar');
+            statusBar.innerHTML = '<div class="status-dot" style="background: #10b981;"></div>CONEXÃO ESTABELECIDA >> SISTEMA ATIVO';
+            statusBar.style.background = 'rgba(16, 185, 129, 0.1)';
+            statusBar.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            statusBar.style.color = '#10b981';
+            
+            clearInterval(checagemInterval);
+            clearInterval(timerInterval);
+          }
+        } catch (error) {
+          console.error('Erro na checagem de conexão:', error);
+        }
+      }, 3000); // Checa a cada 3s
+    }
+
+    function showError(message) {
+      const statusDiv = document.createElement('div');
+      statusDiv.className = 'status error';
+      statusDiv.innerHTML = message.replace(/\n/g, '<br>');
+      
+      // Remove mensagens anteriores
+      const existing = document.querySelector('.status');
+      if (existing) existing.remove();
+      
+      // Adiciona nova mensagem
+      const container = document.querySelector('.container');
+      container.appendChild(statusDiv);
+      
+      // Remove após 5 segundos
+      setTimeout(() => statusDiv.remove(), 5000);
+    }
+
+    function showSuccess(message) {
+      const statusDiv = document.createElement('div');
+      statusDiv.className = 'status success';
+      statusDiv.innerHTML = message.replace(/\n/g, '<br>');
+      
+      // Remove mensagens anteriores
+      const existing = document.querySelector('.status');
+      if (existing) existing.remove();
+      
+      // Adiciona nova mensagem
+      const container = document.querySelector('.container');
+      container.appendChild(statusDiv);
+      
+      // Remove após 3 segundos
+      setTimeout(() => statusDiv.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
